@@ -1697,6 +1697,7 @@ impl std::fmt::Debug for super::ExecuteSqlPayload {
         debug_struct.field("database", &self.database);
         debug_struct.field("row_limit", &self.row_limit);
         debug_struct.field("partial_result_mode", &self.partial_result_mode);
+        debug_struct.field("application", &self.application);
         debug_struct.field("user_password", &self.user_password);
         if !self._unknown_fields.is_empty() {
             debug_struct.field("_unknown_fields", &self._unknown_fields);
@@ -2923,6 +2924,7 @@ impl std::fmt::Debug for super::DnsNameMapping {
         debug_struct.field("name", &self.name);
         debug_struct.field("connection_type", &self.connection_type);
         debug_struct.field("dns_scope", &self.dns_scope);
+        debug_struct.field("record_manager", &self.record_manager);
         if !self._unknown_fields.is_empty() {
             debug_struct.field("_unknown_fields", &self._unknown_fields);
         }

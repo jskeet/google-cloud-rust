@@ -3896,6 +3896,9 @@ impl serde::ser::Serialize for super::ExecuteSqlPayload {
         if !wkt::internal::is_default(&self.partial_result_mode) {
             state.serialize_entry("partialResultMode", &self.partial_result_mode)?;
         }
+        if !self.application.is_empty() {
+            state.serialize_entry("application", &self.application)?;
+        }
         if !self._unknown_fields.is_empty() {
             for (key, value) in self._unknown_fields.iter() {
                 state.serialize_entry(key, &value)?;
@@ -6926,6 +6929,9 @@ impl serde::ser::Serialize for super::DnsNameMapping {
         }
         if !wkt::internal::is_default(&self.dns_scope) {
             state.serialize_entry("dnsScope", &self.dns_scope)?;
+        }
+        if !wkt::internal::is_default(&self.record_manager) {
+            state.serialize_entry("recordManager", &self.record_manager)?;
         }
         if !self._unknown_fields.is_empty() {
             for (key, value) in self._unknown_fields.iter() {

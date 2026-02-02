@@ -13800,6 +13800,7 @@ impl<'de> serde::de::Deserialize<'de> for super::ExecuteSqlPayload {
             __auto_iam_authn,
             __row_limit,
             __partial_result_mode,
+            __application,
             Unknown(std::string::String),
         }
         impl<'de> serde::de::Deserialize<'de> for __FieldTag {
@@ -13830,6 +13831,7 @@ impl<'de> serde::de::Deserialize<'de> for super::ExecuteSqlPayload {
                             "row_limit" => Ok(__FieldTag::__row_limit),
                             "partialResultMode" => Ok(__FieldTag::__partial_result_mode),
                             "partial_result_mode" => Ok(__FieldTag::__partial_result_mode),
+                            "application" => Ok(__FieldTag::__application),
                             _ => Ok(__FieldTag::Unknown(value.to_string())),
                         }
                     }
@@ -13932,6 +13934,16 @@ impl<'de> serde::de::Deserialize<'de> for super::ExecuteSqlPayload {
                                 .next_value::<std::option::Option<
                                     crate::model::execute_sql_payload::PartialResultMode,
                                 >>()?
+                                .unwrap_or_default();
+                        }
+                        __FieldTag::__application => {
+                            if !fields.insert(__FieldTag::__application) {
+                                return std::result::Result::Err(A::Error::duplicate_field(
+                                    "multiple values for application",
+                                ));
+                            }
+                            result.application = map
+                                .next_value::<std::option::Option<std::string::String>>()?
                                 .unwrap_or_default();
                         }
                         __FieldTag::Unknown(key) => {
@@ -24036,6 +24048,7 @@ impl<'de> serde::de::Deserialize<'de> for super::DnsNameMapping {
             __name,
             __connection_type,
             __dns_scope,
+            __record_manager,
             Unknown(std::string::String),
         }
         impl<'de> serde::de::Deserialize<'de> for __FieldTag {
@@ -24061,6 +24074,8 @@ impl<'de> serde::de::Deserialize<'de> for super::DnsNameMapping {
                             "connection_type" => Ok(__FieldTag::__connection_type),
                             "dnsScope" => Ok(__FieldTag::__dns_scope),
                             "dns_scope" => Ok(__FieldTag::__dns_scope),
+                            "recordManager" => Ok(__FieldTag::__record_manager),
+                            "record_manager" => Ok(__FieldTag::__record_manager),
                             _ => Ok(__FieldTag::Unknown(value.to_string())),
                         }
                     }
@@ -24115,6 +24130,18 @@ impl<'de> serde::de::Deserialize<'de> for super::DnsNameMapping {
                                 ));
                             }
                             result.dns_scope = map.next_value::<std::option::Option<crate::model::dns_name_mapping::DnsScope>>()?.unwrap_or_default();
+                        }
+                        __FieldTag::__record_manager => {
+                            if !fields.insert(__FieldTag::__record_manager) {
+                                return std::result::Result::Err(A::Error::duplicate_field(
+                                    "multiple values for record_manager",
+                                ));
+                            }
+                            result.record_manager =
+                                map.next_value::<std::option::Option<
+                                    crate::model::dns_name_mapping::RecordManager,
+                                >>()?
+                                .unwrap_or_default();
                         }
                         __FieldTag::Unknown(key) => {
                             let value = map.next_value::<serde_json::Value>()?;

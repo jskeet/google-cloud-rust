@@ -15636,6 +15636,11 @@ pub struct ExecuteSqlPayload {
     /// to throw an error.
     pub partial_result_mode: crate::model::execute_sql_payload::PartialResultMode,
 
+    /// Optional. Specifies the name of the application that is making the request.
+    /// This field is used for telemetry. Only alphanumeric characters, dashes, and
+    /// underscores are allowed. The maximum length is 32 characters.
+    pub application: std::string::String,
+
     /// Credentials for the database connection.
     pub user_password: std::option::Option<crate::model::execute_sql_payload::UserPassword>,
 
@@ -15711,6 +15716,18 @@ impl ExecuteSqlPayload {
         v: T,
     ) -> Self {
         self.partial_result_mode = v.into();
+        self
+    }
+
+    /// Sets the value of [application][crate::model::ExecuteSqlPayload::application].
+    ///
+    /// # Example
+    /// ```ignore,no_run
+    /// # use google_cloud_sql_v1::model::ExecuteSqlPayload;
+    /// let x = ExecuteSqlPayload::new().set_application("example");
+    /// ```
+    pub fn set_application<T: std::convert::Into<std::string::String>>(mut self, v: T) -> Self {
+        self.application = v.into();
         self
     }
 
@@ -29419,7 +29436,7 @@ impl wkt::message::Message for AcquireSsrsLeaseContext {
 #[derive(Clone, Default, PartialEq)]
 #[non_exhaustive]
 pub struct DnsNameMapping {
-    /// The DNS name.
+    /// Output only. The DNS name.
     pub name: std::string::String,
 
     /// Output only. The connection type of the DNS name.
@@ -29427,6 +29444,9 @@ pub struct DnsNameMapping {
 
     /// Output only. The scope that the DNS name applies to.
     pub dns_scope: crate::model::dns_name_mapping::DnsScope,
+
+    /// Output only. The manager for this DNS record.
+    pub record_manager: crate::model::dns_name_mapping::RecordManager,
 
     pub(crate) _unknown_fields: serde_json::Map<std::string::String, serde_json::Value>,
 }
@@ -29475,12 +29495,32 @@ impl DnsNameMapping {
     /// # use google_cloud_sql_v1::model::DnsNameMapping;
     /// use google_cloud_sql_v1::model::dns_name_mapping::DnsScope;
     /// let x0 = DnsNameMapping::new().set_dns_scope(DnsScope::Instance);
+    /// let x1 = DnsNameMapping::new().set_dns_scope(DnsScope::Cluster);
     /// ```
     pub fn set_dns_scope<T: std::convert::Into<crate::model::dns_name_mapping::DnsScope>>(
         mut self,
         v: T,
     ) -> Self {
         self.dns_scope = v.into();
+        self
+    }
+
+    /// Sets the value of [record_manager][crate::model::DnsNameMapping::record_manager].
+    ///
+    /// # Example
+    /// ```ignore,no_run
+    /// # use google_cloud_sql_v1::model::DnsNameMapping;
+    /// use google_cloud_sql_v1::model::dns_name_mapping::RecordManager;
+    /// let x0 = DnsNameMapping::new().set_record_manager(RecordManager::Customer);
+    /// let x1 = DnsNameMapping::new().set_record_manager(RecordManager::CloudSqlAutomation);
+    /// ```
+    pub fn set_record_manager<
+        T: std::convert::Into<crate::model::dns_name_mapping::RecordManager>,
+    >(
+        mut self,
+        v: T,
+    ) -> Self {
+        self.record_manager = v.into();
         self
     }
 }
@@ -29497,6 +29537,7 @@ pub mod dns_name_mapping {
     use super::*;
 
     /// The connection type of the DNS name.
+    /// This enum is not frozen, and new values may be added in the future.
     ///
     /// # Working with unknown values
     ///
@@ -29653,10 +29694,12 @@ pub mod dns_name_mapping {
     #[derive(Clone, Debug, PartialEq)]
     #[non_exhaustive]
     pub enum DnsScope {
-        /// Unknown DNS scope.
+        /// DNS scope not set. This value should not be used.
         Unspecified,
-        /// Indicates a instance-level DNS name.
+        /// Indicates an instance-level DNS name.
         Instance,
+        /// Indicates a cluster-level DNS name.
+        Cluster,
         /// If set, the enum was initialized with an unknown value.
         ///
         /// Applications can examine the value using [DnsScope::value] or
@@ -29681,6 +29724,7 @@ pub mod dns_name_mapping {
             match self {
                 Self::Unspecified => std::option::Option::Some(0),
                 Self::Instance => std::option::Option::Some(1),
+                Self::Cluster => std::option::Option::Some(2),
                 Self::UnknownValue(u) => u.0.value(),
             }
         }
@@ -29693,6 +29737,7 @@ pub mod dns_name_mapping {
             match self {
                 Self::Unspecified => std::option::Option::Some("DNS_SCOPE_UNSPECIFIED"),
                 Self::Instance => std::option::Option::Some("INSTANCE"),
+                Self::Cluster => std::option::Option::Some("CLUSTER"),
                 Self::UnknownValue(u) => u.0.name(),
             }
         }
@@ -29716,6 +29761,7 @@ pub mod dns_name_mapping {
             match value {
                 0 => Self::Unspecified,
                 1 => Self::Instance,
+                2 => Self::Cluster,
                 _ => Self::UnknownValue(dns_scope::UnknownValue(
                     wkt::internal::UnknownEnumValue::Integer(value),
                 )),
@@ -29729,6 +29775,7 @@ pub mod dns_name_mapping {
             match value {
                 "DNS_SCOPE_UNSPECIFIED" => Self::Unspecified,
                 "INSTANCE" => Self::Instance,
+                "CLUSTER" => Self::Cluster,
                 _ => Self::UnknownValue(dns_scope::UnknownValue(
                     wkt::internal::UnknownEnumValue::String(value.to_string()),
                 )),
@@ -29744,6 +29791,7 @@ pub mod dns_name_mapping {
             match self {
                 Self::Unspecified => serializer.serialize_i32(0),
                 Self::Instance => serializer.serialize_i32(1),
+                Self::Cluster => serializer.serialize_i32(2),
                 Self::UnknownValue(u) => u.0.serialize(serializer),
             }
         }
@@ -29756,6 +29804,141 @@ pub mod dns_name_mapping {
         {
             deserializer.deserialize_any(wkt::internal::EnumVisitor::<DnsScope>::new(
                 ".google.cloud.sql.v1.DnsNameMapping.DnsScope",
+            ))
+        }
+    }
+
+    /// The system responsible for managing the DNS record.
+    ///
+    /// # Working with unknown values
+    ///
+    /// This enum is defined as `#[non_exhaustive]` because Google Cloud may add
+    /// additional enum variants at any time. Adding new variants is not considered
+    /// a breaking change. Applications should write their code in anticipation of:
+    ///
+    /// - New values appearing in future releases of the client library, **and**
+    /// - New values received dynamically, without application changes.
+    ///
+    /// Please consult the [Working with enums] section in the user guide for some
+    /// guidelines.
+    ///
+    /// [Working with enums]: https://google-cloud-rust.github.io/working_with_enums.html
+    #[derive(Clone, Debug, PartialEq)]
+    #[non_exhaustive]
+    pub enum RecordManager {
+        /// Record manager not set. This value should not be used.
+        Unspecified,
+        /// The record may be managed by the customer. It is not automatically
+        /// managed by Cloud SQL automation.
+        Customer,
+        /// The record is managed by Cloud SQL, which will create, update,
+        /// and delete the DNS records for the zone automatically when
+        /// the Cloud SQL database instance is created or updated.
+        CloudSqlAutomation,
+        /// If set, the enum was initialized with an unknown value.
+        ///
+        /// Applications can examine the value using [RecordManager::value] or
+        /// [RecordManager::name].
+        UnknownValue(record_manager::UnknownValue),
+    }
+
+    #[doc(hidden)]
+    pub mod record_manager {
+        #[allow(unused_imports)]
+        use super::*;
+        #[derive(Clone, Debug, PartialEq)]
+        pub struct UnknownValue(pub(crate) wkt::internal::UnknownEnumValue);
+    }
+
+    impl RecordManager {
+        /// Gets the enum value.
+        ///
+        /// Returns `None` if the enum contains an unknown value deserialized from
+        /// the string representation of enums.
+        pub fn value(&self) -> std::option::Option<i32> {
+            match self {
+                Self::Unspecified => std::option::Option::Some(0),
+                Self::Customer => std::option::Option::Some(1),
+                Self::CloudSqlAutomation => std::option::Option::Some(2),
+                Self::UnknownValue(u) => u.0.value(),
+            }
+        }
+
+        /// Gets the enum value as a string.
+        ///
+        /// Returns `None` if the enum contains an unknown value deserialized from
+        /// the integer representation of enums.
+        pub fn name(&self) -> std::option::Option<&str> {
+            match self {
+                Self::Unspecified => std::option::Option::Some("RECORD_MANAGER_UNSPECIFIED"),
+                Self::Customer => std::option::Option::Some("CUSTOMER"),
+                Self::CloudSqlAutomation => std::option::Option::Some("CLOUD_SQL_AUTOMATION"),
+                Self::UnknownValue(u) => u.0.name(),
+            }
+        }
+    }
+
+    impl std::default::Default for RecordManager {
+        fn default() -> Self {
+            use std::convert::From;
+            Self::from(0)
+        }
+    }
+
+    impl std::fmt::Display for RecordManager {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
+            wkt::internal::display_enum(f, self.name(), self.value())
+        }
+    }
+
+    impl std::convert::From<i32> for RecordManager {
+        fn from(value: i32) -> Self {
+            match value {
+                0 => Self::Unspecified,
+                1 => Self::Customer,
+                2 => Self::CloudSqlAutomation,
+                _ => Self::UnknownValue(record_manager::UnknownValue(
+                    wkt::internal::UnknownEnumValue::Integer(value),
+                )),
+            }
+        }
+    }
+
+    impl std::convert::From<&str> for RecordManager {
+        fn from(value: &str) -> Self {
+            use std::string::ToString;
+            match value {
+                "RECORD_MANAGER_UNSPECIFIED" => Self::Unspecified,
+                "CUSTOMER" => Self::Customer,
+                "CLOUD_SQL_AUTOMATION" => Self::CloudSqlAutomation,
+                _ => Self::UnknownValue(record_manager::UnknownValue(
+                    wkt::internal::UnknownEnumValue::String(value.to_string()),
+                )),
+            }
+        }
+    }
+
+    impl serde::ser::Serialize for RecordManager {
+        fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+        where
+            S: serde::Serializer,
+        {
+            match self {
+                Self::Unspecified => serializer.serialize_i32(0),
+                Self::Customer => serializer.serialize_i32(1),
+                Self::CloudSqlAutomation => serializer.serialize_i32(2),
+                Self::UnknownValue(u) => u.0.serialize(serializer),
+            }
+        }
+    }
+
+    impl<'de> serde::de::Deserialize<'de> for RecordManager {
+        fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+        where
+            D: serde::Deserializer<'de>,
+        {
+            deserializer.deserialize_any(wkt::internal::EnumVisitor::<RecordManager>::new(
+                ".google.cloud.sql.v1.DnsNameMapping.RecordManager",
             ))
         }
     }
@@ -34035,6 +34218,8 @@ pub enum SqlDatabaseVersion {
     Mysql8046,
     /// The database version is MySQL 8.4.
     Mysql84,
+    /// The database version is MySQL 9.7.
+    Mysql97,
     /// The database version is SQL Server 2017 Standard.
     Sqlserver2017Standard,
     /// The database version is SQL Server 2017 Enterprise.
@@ -34129,6 +34314,7 @@ impl SqlDatabaseVersion {
             Self::Mysql8045 => std::option::Option::Some(555),
             Self::Mysql8046 => std::option::Option::Some(556),
             Self::Mysql84 => std::option::Option::Some(398),
+            Self::Mysql97 => std::option::Option::Some(654),
             Self::Sqlserver2017Standard => std::option::Option::Some(11),
             Self::Sqlserver2017Enterprise => std::option::Option::Some(14),
             Self::Sqlserver2017Express => std::option::Option::Some(15),
@@ -34189,6 +34375,7 @@ impl SqlDatabaseVersion {
             Self::Mysql8045 => std::option::Option::Some("MYSQL_8_0_45"),
             Self::Mysql8046 => std::option::Option::Some("MYSQL_8_0_46"),
             Self::Mysql84 => std::option::Option::Some("MYSQL_8_4"),
+            Self::Mysql97 => std::option::Option::Some("MYSQL_9_7"),
             Self::Sqlserver2017Standard => std::option::Option::Some("SQLSERVER_2017_STANDARD"),
             Self::Sqlserver2017Enterprise => std::option::Option::Some("SQLSERVER_2017_ENTERPRISE"),
             Self::Sqlserver2017Express => std::option::Option::Some("SQLSERVER_2017_EXPRESS"),
@@ -34282,6 +34469,7 @@ impl std::convert::From<i32> for SqlDatabaseVersion {
             555 => Self::Mysql8045,
             556 => Self::Mysql8046,
             557 => Self::Postgres18,
+            654 => Self::Mysql97,
             _ => Self::UnknownValue(sql_database_version::UnknownValue(
                 wkt::internal::UnknownEnumValue::Integer(value),
             )),
@@ -34321,6 +34509,7 @@ impl std::convert::From<&str> for SqlDatabaseVersion {
             "MYSQL_8_0_45" => Self::Mysql8045,
             "MYSQL_8_0_46" => Self::Mysql8046,
             "MYSQL_8_4" => Self::Mysql84,
+            "MYSQL_9_7" => Self::Mysql97,
             "SQLSERVER_2017_STANDARD" => Self::Sqlserver2017Standard,
             "SQLSERVER_2017_ENTERPRISE" => Self::Sqlserver2017Enterprise,
             "SQLSERVER_2017_EXPRESS" => Self::Sqlserver2017Express,
@@ -34384,6 +34573,7 @@ impl serde::ser::Serialize for SqlDatabaseVersion {
             Self::Mysql8045 => serializer.serialize_i32(555),
             Self::Mysql8046 => serializer.serialize_i32(556),
             Self::Mysql84 => serializer.serialize_i32(398),
+            Self::Mysql97 => serializer.serialize_i32(654),
             Self::Sqlserver2017Standard => serializer.serialize_i32(11),
             Self::Sqlserver2017Enterprise => serializer.serialize_i32(14),
             Self::Sqlserver2017Express => serializer.serialize_i32(15),
